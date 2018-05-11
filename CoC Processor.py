@@ -36,29 +36,36 @@ class Processor(Frame):
         self.grid(row=0, column=0)
 
         self.label1 = Label(self, text="Directory with Tracking Sheet",
-                            font="Helvetica 8 bold italic").grid(row=1, column=1, padx=5, pady=2)
+                            font="Helvetica 8 bold italic").grid(row=1, column=1, padx=5, pady=10)
 
         self.label2 = Label(self, text="Directory with Folder Containing COCs",
                             font="Helvetica 8 bold italic").grid(row=2, column=1, padx=5, pady=2)
 
+        self.label3 = Label(self, text="Name of Tracking Sheet \n WARNING: Do not alter structure of sheet",
+                            font="Helvetica 8 bold italic").grid(row=3, column=1, padx=5, pady=2)
+
         self.entry1 = Entry(self, width=40)
         self.entry2 = Entry(self, width=40)
+        self.entry3 = Entry(self, width=40)
 
         self.entry1.grid(row=1, column=2, padx=5, pady=2)
         self.entry2.grid(row=2, column=2, padx=5, pady=2)
+        self.entry3.grid(row=3, column=2, padx=5, pady=2)
 
         self.button1 = Button(self, text='Submit & Run Job',
-                              command=self.first_button).grid(row=4, column=1, columnspan=2,
+                              command=self.first_button).grid(row=5, column=1, columnspan=3,
                                                               sticky=N, padx=5, pady=(5, 2))
 
-        self.button2 = Button(self, text='Exit', command=self.quit).grid(row=5, column=1, columnspan=2, sticky=N,
+        self.button2 = Button(self, text='Exit', command=self.quit).grid(row=6, column=1, columnspan=3, sticky=N,
                                                                          padx=5, pady=(5, 2))
+
 
     def first_button(self):
         try:
 
             working_directory = self.entry1.get()
             folder_directory = self.entry2.get()
+            trackingsheet = self.entry3.get()
 
 
 
@@ -208,7 +215,7 @@ class Processor(Frame):
                 os.chdir(working_directory)
 
                 # Load Workbook
-                workbook = load_workbook('TrackingSheet.xlsx')
+                workbook = load_workbook(trackingsheet+'.xlsx')
 
                 # Select Outputsheet
                 output_sheet = workbook['01. Collection Details']
@@ -217,7 +224,7 @@ class Processor(Frame):
                 for row in dataframe_to_rows(extractionframe, index=False, header=False):
                     output_sheet.append(row)
 
-                workbook.save('TrackingSheet.xlsx')
+                workbook.save(trackingsheet+'.xlsx')
 
             messagebox.showinfo("Success!!!", "Data Extracted, Program will now quit")
 
@@ -225,10 +232,13 @@ class Processor(Frame):
             self.quit()
 
         except:
-            messagebox.showerror('WARNING', 'Something went wrong \n \n'
-                                            'Check if your CoC folder directory is correct \n \n'
-                                            'OR \n \n'
-                                            'Working directory contains \'Tracking Sheet\' \n \n'
+            messagebox.showerror('WARNING', 'Something went wrong\n \n' 
+                                            'Check if your CoC folder directory is correct\n \n'
+                                            'OR\n \n'
+                                            'Working directory contains tracking sheet\n \n'
+                                            'OR\n \n'
+                                            'Ensure tracking sheet does NOT contain .xlsx extension\n \n'
+                                            'OR\n \n'
                                             'Otherwise contact program creator')
 
 def main():
